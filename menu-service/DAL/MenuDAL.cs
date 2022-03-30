@@ -17,7 +17,8 @@ namespace DAL
 
         public Menu? Get(int id)
         {
-            DTO.Menu? menu = _context.Menus.FirstOrDefault(x => x.ID == id);
+            DTO.Menu? menu = _context.Menus.Include(i => i.Items).FirstOrDefault(x => x.ID == id);
+
 
             if (menu == null)
             {
