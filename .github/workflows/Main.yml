@@ -24,7 +24,7 @@ jobs:
 
   deployment:
     name: deployment
-    runs-on: ubuntu-latests
+    runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
