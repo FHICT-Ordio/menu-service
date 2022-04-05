@@ -39,7 +39,7 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=0
           export COMPOSE_DOCKER_CLI_BUILD=0
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest ./menu-service
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest
 
   # publish:
