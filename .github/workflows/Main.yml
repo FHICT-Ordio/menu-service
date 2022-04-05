@@ -39,8 +39,8 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=0
           export COMPOSE_DOCKER_CLI_BUILD=0
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/ordio:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/ordio:latest
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest
 
   # publish:
   #     runs-on: ubuntu-latest
