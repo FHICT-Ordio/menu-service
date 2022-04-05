@@ -23,3 +23,4 @@ jobs:
       run: dotnet build --no-restore "./menu-service/"
     - name: Test
       run: dotnet test --no-build --verbosity normal "./menu-service/"
+
