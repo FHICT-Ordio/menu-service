@@ -36,13 +36,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Path
-        run: dir
       - name: Build and push
         run: |
           export DOCKER_BUILDKIT=0
           export COMPOSE_DOCKER_CLI_BUILD=0
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest ./menu-service
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest .
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest
 
   # publish:
