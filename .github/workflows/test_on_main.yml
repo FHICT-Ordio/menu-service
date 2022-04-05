@@ -17,9 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore './menu-service'
+    - name: Restore dependencies './menu-service'
+      run: dotnet restore
     - name: Build
       run: dotnet build --no-restore './menu-service'
     - name: Test
-      run: dotnet test --no-build --verbosity normal './menu-service' 
+      run: dotnet test --no-build --verbosity normal './menu-service'
