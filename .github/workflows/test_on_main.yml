@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore "./menu-service/"
+      run: dotnet restore "./menu-service/" 
     - name: Build
       run: dotnet build --no-restore "./menu-service/"
     - name: Test
