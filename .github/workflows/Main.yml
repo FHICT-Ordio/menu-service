@@ -1,16 +1,31 @@
-name: Build and Deploy Docker
+name: Build and Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore "./menu-service/" 
+    - name: Build
+      run: dotnet build --no-restore "./menu-service/"
+    - name: Test
+      run: dotnet test --no-build --verbosity normal "./menu-service/"
+
+
+publish:
+    runs-on: ubuntu-latest
+    needs: build
     permissions: 
       contents: read
       packages: write
