@@ -12,7 +12,7 @@ COPY ["AL/AL.csproj", "AL/"]
 COPY ["DTO/DTO.csproj", "DTO/"]
 COPY ["FL/FL.csproj", "FL/"]
 COPY ["DAL/DAL.csproj", "DAL/"]
-RUN dotnet restore "menu-service/menu-service.csproj"
+RUN dotnet restore "./menu-service/menu-service.csproj"
 COPY . .
 WORKDIR "/src/menu-service"
 RUN dotnet build "menu-service.csproj" -c Release -o /app/build
