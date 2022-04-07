@@ -8,10 +8,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["menu-service/menu-service.csproj", "menu-service/"]
-COPY ["AL/AL.csproj", "AL/"]
-COPY ["DTO/DTO.csproj", "DTO/"]
-COPY ["FL/FL.csproj", "FL/"]
-COPY ["DAL/DAL.csproj", "DAL/"]
+COPY ["AL/AL.csproj", "../AL/"]
+COPY ["DTO/DTO.csproj", "../DTO/"]
+COPY ["FL/FL.csproj", "../FL/"]
+COPY ["DAL/DAL.csproj", "../DAL/"]
 RUN dotnet restore "./menu-service/menu-service.csproj"
 COPY . .
 WORKDIR "/src/menu-service"
