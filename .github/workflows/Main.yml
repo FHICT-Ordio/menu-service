@@ -36,12 +36,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      # - name: Build and push
-      #   run: |
-      #     export DOCKER_BUILDKIT=0
-      #     export COMPOSE_DOCKER_CLI_BUILD=0
-      #     docker build -f menu-service./Dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest .
-      #     docker push ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -49,3 +43,17 @@ jobs:
           file: ./menu-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/menu-service:latest
+      - name: Deploy Container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker stop menu-service
+            docker rm menu-service
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/menu-service:latest
+            docker run -d -p 127.0.0.1:7237 --name=menu-service ${{ secrets.DOCKER_HUB_USERNAME }}/menu-service:latest
+
+
