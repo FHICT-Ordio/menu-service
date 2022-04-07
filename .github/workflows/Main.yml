@@ -48,4 +48,4 @@ jobs:
           context: ./
           file: ./menu-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ordio:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/menu-service:latest
