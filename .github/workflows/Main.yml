@@ -54,6 +54,6 @@ jobs:
             cd Software_S3\Docker
             docker-compose stop menu-service
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/menu-service:latest
-            docker-compose up -d --build menu-servoce
+            docker-compose up -d --build menu-service
 
 
