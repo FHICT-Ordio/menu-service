@@ -55,5 +55,35 @@ jobs:
             docker-compose stop menu-service
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/menu-service:latest
             docker-compose up -d --build menu-service
+  
+  push-docs:
+    runs-on: ubuntu-latest
+    needs: build
+    #if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: Eeventify/general
+          token: ${{ secrets.PAT_TOKEN }}
+      
+      - name: Download docs artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docs
+      
+      - name: Check Git status
+        id: check
+        run: echo "::set-output name=status::$(git status -s)"
+      
+      - name: Commit files
+        id: commit
+        if: steps.check.outputs.status != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Add changes"
+          git push
+
 
 
