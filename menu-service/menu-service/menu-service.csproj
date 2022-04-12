@@ -48,7 +48,7 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Debug'">
     <Message Importance="high" Text="&quot;$(OutputPath)$(AssemblyName).dll&quot;" />
     <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet swagger tofile --yaml --output api-menu.yaml &quot;$(OutputPath)$(AssemblyName).dll&quot; v1" />
