@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "menu_service": {
+    "menu-service": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
