@@ -3,6 +3,11 @@ info:
   title: Menu API
   description: An API used for handling restaurant menus
   version: v1
+servers:
+  - url: http://86.92.40.132:1000
+    description: Main production server
+  - url: http://localhost:1001
+    description: Internal testing server
 paths:
   /Menu:
     put:
