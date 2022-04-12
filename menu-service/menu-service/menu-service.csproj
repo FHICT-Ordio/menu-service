@@ -5,9 +5,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>menu_service</RootNamespace>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UserSecretsId>32332e0f-4361-432f-b901-79748afd114e</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,5 +31,10 @@
     <ProjectReference Include="..\AL\AL.csproj" />
     <ProjectReference Include="..\FL\FL.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Debug'">
+    <Exec Command="dotnet tool restore" />
+    <Exec Command="dotnet swagger tofile --yaml --output api-menu.yaml &quot;$(OutputPath)$(AssemblyName).dll&quot; v1" />
+  </Target>
 
 </Project>
