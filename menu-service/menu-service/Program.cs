@@ -43,11 +43,16 @@ builder.Services.AddSwaggerGen(opt => {
 var app = builder.Build();
 
 // Startup EF migration
-using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+try
 {
-    DbContext context = serviceScope.ServiceProvider.GetRequiredService<MenuContext>();
-    context.Database.Migrate();
+    using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+    {
+        DbContext context = serviceScope.ServiceProvider.GetRequiredService<MenuContext>();
+        context.Database.Migrate();
+    }
 }
+catch { }
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
