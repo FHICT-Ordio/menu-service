@@ -21,6 +21,12 @@ jobs:
       run: dotnet build --no-restore "./menu-service/"
     - name: Test
       run: dotnet test --no-build --verbosity normal "./menu-service/"
+    - name: Upload documentation file
+      uses: actions/upload-artifact@v3
+      with:
+        name: docs
+        path: ./menu-service/menu-service/api-menu.yaml
+        retention-days: 1
 
   deployment:
     name: deployment
