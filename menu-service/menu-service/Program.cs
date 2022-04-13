@@ -28,11 +28,22 @@ builder.Services.Configure<MvcJsonOptions>(o => o.JsonSerializerOptions.Converte
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt => {
-    opt.SwaggerDoc("v1", new OpenApiInfo
+    opt.AddServer(new OpenApiServer
     {
+        Url = "http://86.92.40.132:1000",
+        Description = "Main production server"
+    });
+    opt.AddServer(new OpenApiServer
+    {
+        Url = "http://localhost:1001",
+        Description = "Internal testing server"
+    });
+
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {        
         Version = "v1",
         Title = "Menu API",
-        Description = "An API used for handling restaurant menus",
+        Description = "An API used for handling restaurant menus"
     });
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -43,11 +54,16 @@ builder.Services.AddSwaggerGen(opt => {
 var app = builder.Build();
 
 // Startup EF migration
-using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+try
 {
-    DbContext context = serviceScope.ServiceProvider.GetRequiredService<MenuContext>();
-    context.Database.Migrate();
+    using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+    {
+        DbContext context = serviceScope.ServiceProvider.GetRequiredService<MenuContext>();
+        context.Database.Migrate();
+    }
 }
+catch { }
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
