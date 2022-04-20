@@ -10,8 +10,9 @@ namespace AL
 {
     public interface IMenuCollection
     {
-        public Menu? Get(int id);
-        public int Add(Menu item);
-        public bool Delete(int id);
+        public int Add(MenuDTO menuDTO);
+        public MenuDTO? Get(int ID);
+        public bool Update(MenuDTO menuDTO);
+        public bool Delete(int ID);
     }
 }

@@ -22,8 +22,16 @@ builder.Services.AddDbContext<MenuContext>(opt =>
 
 
 
-builder.Services.Configure<JsonOptions>(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-builder.Services.Configure<MvcJsonOptions>(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.Configure<JsonOptions>(o =>
+{
+    o.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    o.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
+builder.Services.Configure<MvcJsonOptions>(o =>
+{
+    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
