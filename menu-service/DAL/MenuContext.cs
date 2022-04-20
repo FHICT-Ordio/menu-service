@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-using DTO;
+using DAL.Model;
 
 namespace DAL
 {
@@ -16,7 +16,6 @@ namespace DAL
         public DbSet<Menu> Menus { get; set; }                
         public DbSet<Category> Categories { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<CategoryItem> CategoryItems { get; set; }
         public DbSet<ItemImage> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,24 +23,22 @@ namespace DAL
             modelBuilder.Entity<Menu>().ToTable("Menus");            
             modelBuilder.Entity<Category>().ToTable("Categories");
             modelBuilder.Entity<Item>().ToTable("Items");
-            modelBuilder.Entity<CategoryItem>().ToTable("CategoryItems");
 
             modelBuilder.Entity<Menu>()
                 .HasMany(m => m.Categories)
-                .WithOne(c => c.Menu);
+                .WithOne(c => c.Menu)
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Menu>()
                 .HasMany(m => m.Items)
-                .WithOne(i => i.Menu);
-            modelBuilder.Entity<Category>()
-                .HasMany(c => c.CategoryItems)
-                .WithOne(ci => ci.Category);
-            modelBuilder.Entity<Item>()
-                .HasMany(i => i.CategoryItems)
-                .WithOne(ci => ci.Item)
-                .OnDelete(DeleteBehavior.NoAction);
+                .WithOne(i => i.Menu)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<CategoryItem>()
-                    .HasKey(c => new { c.CategoryID, c.ItemID });
+            modelBuilder.Entity<Item>()
+                .HasMany(x => x.Categories)
+                .WithMany(x => x.Items);
+            modelBuilder.Entity<Category>()
+                .HasMany(x => x.Items)
+                .WithMany(x => x.Categories);            
 
             modelBuilder.Entity<ItemImage>().ToTable("Images").HasNoKey();
         }

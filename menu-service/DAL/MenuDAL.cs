@@ -2,6 +2,7 @@
 
 using AL;
 using DTO;
+using DAL.Model;
 
 
 namespace DAL
@@ -15,46 +16,57 @@ namespace DAL
             _context = context as MenuContext ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public Menu? Get(int id)
+        public int Add(MenuDTO menuDTO)
         {
-            DTO.Menu? menu = _context.Menus.Include(i => i.Items).FirstOrDefault(x => x.ID == id);
+            if (menuDTO == null)
+                throw new ArgumentNullException(nameof(menuDTO));
 
+
+            _context.Menus.Add(new Menu(menuDTO) { LastEdited = DateTime.Now });
+            _context.SaveChanges();
+
+            return menuDTO.ID;
+        }
+
+        public MenuDTO? Get(int ID)
+        {
+            Menu? menu = _context.Menus
+                .Include(x => x.Items)
+                .ThenInclude(x => x.Categories)
+                .Include(x => x.Categories)
+                .ThenInclude(x => x.Items)
+                .FirstOrDefault(x => x.ID == ID);
 
             if (menu == null)
-            {
                 return null;
-            }
 
-            _context.Entry(menu).Collection(x => x.Categories).Load();
-            _context.Entry(menu).Collection(x => x.Items).Load();
-            return menu;
+            return menu.ToDTO(true, false, true);
         }
 
-        public int Add(Menu item)
+        public bool Update(MenuDTO menuDTO)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            Menu? menu = _context.Menus.FirstOrDefault(x => x.ID == menuDTO.ID);
 
-            _context.Menus.Add(item);
-            _context.SaveChanges();
-
-            return item.ID;
-        }
-
-        public bool Delete(int id)
-        {
-            Menu? menuDTO = Get(id);
-            if (menuDTO == null)
-            {
+            if (menu == null)
                 return false;
-            }
 
-            _context.Menus.Remove(menuDTO);
-            _context.SaveChanges();
+            menu.Title = menuDTO.Title;
+            menu.Description = menuDTO.Description;
+            menu.RestaurantName = menuDTO.RestaurantName;                       
+            menu.LastEdited = DateTime.Now;
             
-            return true;
+            _context.Menus.Update(menu);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool Delete(int ID)
+        {
+            Menu? menu = _context.Menus.Include(x => x.Items).Include(x => x.Categories).FirstOrDefault(x => x.ID == ID);
+            if (menu == null)
+                return false;
+
+            _context.Menus.Remove(menu);
+            return _context.SaveChanges() > 0;
         }
     }
 }

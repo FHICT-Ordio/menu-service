@@ -10,8 +10,9 @@ namespace AL
 {
     public interface ICategoryCollection
     {
-        public DTO.Category? Get(int id);
-        public int Add(DTO.Category item, int menuId);
-        public bool Delete(int id);
+        public int Add(int menuID, CategoryDTO categoryDTO);
+        public CategoryDTO? Get(int menuID, int categoryID);
+        public bool Update(int menuID, CategoryDTO categoryDTO);
+        public bool Delete(int menuID, int categoryID);
     }
 }
