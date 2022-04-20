@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DAL.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,7 +28,7 @@ namespace DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     RestaurantName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastEdited = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -43,8 +43,7 @@ namespace DAL.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MenuID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -54,8 +53,7 @@ namespace DAL.Migrations
                         name: "FK_Categories_Menus_MenuID",
                         column: x => x.MenuID,
                         principalTable: "Menus",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -65,9 +63,9 @@ namespace DAL.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<float>(type: "real", nullable: false),
-                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MenuID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -77,31 +75,31 @@ namespace DAL.Migrations
                         name: "FK_Items_Menus_MenuID",
                         column: x => x.MenuID,
                         principalTable: "Menus",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
-                name: "CategoryItems",
+                name: "CategoryItem",
                 columns: table => new
                 {
-                    CategoryID = table.Column<int>(type: "int", nullable: false),
-                    ItemID = table.Column<int>(type: "int", nullable: false)
+                    CategoriesID = table.Column<int>(type: "int", nullable: false),
+                    ItemsID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CategoryItems", x => new { x.CategoryID, x.ItemID });
+                    table.PrimaryKey("PK_CategoryItem", x => new { x.CategoriesID, x.ItemsID });
                     table.ForeignKey(
-                        name: "FK_CategoryItems_Categories_CategoryID",
-                        column: x => x.CategoryID,
+                        name: "FK_CategoryItem_Categories_CategoriesID",
+                        column: x => x.CategoriesID,
                         principalTable: "Categories",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CategoryItems_Items_ItemID",
-                        column: x => x.ItemID,
+                        name: "FK_CategoryItem_Items_ItemsID",
+                        column: x => x.ItemsID,
                         principalTable: "Items",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -110,9 +108,9 @@ namespace DAL.Migrations
                 column: "MenuID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoryItems_ItemID",
-                table: "CategoryItems",
-                column: "ItemID");
+                name: "IX_CategoryItem_ItemsID",
+                table: "CategoryItem",
+                column: "ItemsID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Items_MenuID",
@@ -123,7 +121,7 @@ namespace DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CategoryItems");
+                name: "CategoryItem");
 
             migrationBuilder.DropTable(
                 name: "Images");

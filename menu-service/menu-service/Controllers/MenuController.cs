@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using System.Collections.Generic;
 
 using AL;
 using FL;
 using DTO;
 using MenuContext = DAL.MenuContext;
+
 
 namespace menu_service.Controllers
 {
@@ -66,7 +68,7 @@ namespace menu_service.Controllers
         /// </summary>
         public SortType Sort { get; set; } = SortType.ALP_ASC;
         public FilterType Filter { get; set; } = FilterType.NONE;
-        public object? FilterValue { get; set; } = null;
+        public Dictionary<string, string>? FilterValue { get; set; } = new();
     }
 
     [ApiController]
@@ -77,72 +79,72 @@ namespace menu_service.Controllers
         {
             public string Title { get; set; }
             public string RestaurantName { get; set; }
+            public string? Description { get; set; } = "";
         }
 
-        public class Category
+        public class MenuEdit
         {
-            public string Name { get; set; }
-            public string DisplayName { get; set; }
+            public string? Title { get; set; } = null;
+            public string? RestaurantName { get; set; } = null;
+            public string? Description { get; set; } = null;
         }
 
         private readonly IMenuCollection _menuCollection;
-        private readonly ICategoryCollection _categoryCollection;
 
-        public MenuController(MenuContext context, IMenuCollection? menuCollection = null, ICategoryCollection? categoryCollection = null)
+        public MenuController(MenuContext context, IMenuCollection? menuCollection = null)
         {
-            _menuCollection = menuCollection ?? IMenuCollectionFactory.Get(context);
-            _categoryCollection = categoryCollection ?? ICategoryCollectionFactory.Get(context);
+            _menuCollection = menuCollection ?? IMenuCollectionFactory.Get(context);            
         }
 
-        [HttpPut]
-        public IActionResult? AddMenu(Menu item)
+        [HttpPost]
+        public IActionResult? AddMenu(Menu menu)
         {
-            if (item == null)
+            if (menu == null)
             {
                 return BadRequest("No item was supplied");
             }
 
-            _menuCollection.Add(new DTO.Menu { Title = item.Title, RestaurantName = item.RestaurantName });
-            return Ok();
+            int menuID = _menuCollection.Add(new MenuDTO { Title = menu.Title, RestaurantName = menu.RestaurantName });
+            return Ok(menuID);
         }
 
-        [HttpPut]
-        [Route("Test")]
-        public IActionResult? TEST(Menu menu)
+
+        [HttpGet]
+        [Route("{menuID}")]
+        public IActionResult? GetMenu(int menuID)
         {
-            _menuCollection.Add(new DTO.Menu { Title = menu.Title, RestaurantName = menu.RestaurantName });
-            return Ok();
+            MenuDTO? menu = _menuCollection.Get(menuID);
+
+            if (menu == null)
+                return BadRequest("The menu could not be found");
+            
+            return Ok(menu);
+        }
+        
+        [HttpPut]
+        [Route("{menuID}")]
+        public IActionResult? UpdateMenu(int menuID, MenuEdit menu)
+        {
+            MenuDTO? menuDTO = _menuCollection.Get(menuID);
+
+            if (menuDTO == null)
+                return BadRequest("Menu with given ID does not exist");
+
+            menuDTO.Title = menu.Title ?? menuDTO.Title;
+            menuDTO.RestaurantName = menu.RestaurantName ?? menuDTO.RestaurantName;
+            menuDTO.Description = menu.Description ?? menuDTO.Description;
+            
+            if (_menuCollection.Update(menuDTO))
+                return Ok();
+            else
+                return BadRequest("An error occured");
         }
 
         [HttpDelete]
-        [Route("{id}")]
-        public IActionResult? DeleteMenu(int id)
+        [Route("{menuID}")]
+        public IActionResult? DeleteMenu(int menuID)
         {
-            _menuCollection.Delete(id);
-            return Ok();
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult? GetMenu(int id)
-        {
-            DTO.Menu menu = _menuCollection.Get(id);
-                return Ok(menu);
-        }
-        
-
-        [HttpGet]
-        [Route("Items/{id}")]
-        public IActionResult? GetAllItems(int id, GetOptions? options)
-        {
-            return null;
-        }
-
-        [HttpPut]
-        [Route("TestPut/{id}")]
-        public IActionResult? Test(int id, Category category)
-        {
-            _categoryCollection.Add(new DTO.Category { DisplayName = category.DisplayName, Name = category.Name }, id);
+            _menuCollection.Delete(menuID);
             return Ok();
         }
     }

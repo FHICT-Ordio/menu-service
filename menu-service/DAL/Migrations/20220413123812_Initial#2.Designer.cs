@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(MenuContext))]
-    [Migration("20220330111023_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20220413123812_Initial#2")]
+    partial class Initial2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,22 @@ namespace DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("DTO.Category", b =>
+            modelBuilder.Entity("CategoryItem", b =>
+                {
+                    b.Property<int>("CategoriesID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemsID")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesID", "ItemsID");
+
+                    b.HasIndex("ItemsID");
+
+                    b.ToTable("CategoryItem");
+                });
+
+            modelBuilder.Entity("DAL.Model.Category", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -33,11 +48,6 @@ namespace DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MenuID")
@@ -54,22 +64,7 @@ namespace DAL.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("DTO.CategoryItem", b =>
-                {
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemID")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoryID", "ItemID");
-
-                    b.HasIndex("ItemID");
-
-                    b.ToTable("CategoryItems", (string)null);
-                });
-
-            modelBuilder.Entity("DTO.Item", b =>
+            modelBuilder.Entity("DAL.Model.Item", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -78,7 +73,6 @@ namespace DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MenuID")
@@ -92,7 +86,6 @@ namespace DAL.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("Tags")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -102,7 +95,7 @@ namespace DAL.Migrations
                     b.ToTable("Items", (string)null);
                 });
 
-            modelBuilder.Entity("DTO.ItemImage", b =>
+            modelBuilder.Entity("DAL.Model.ItemImage", b =>
                 {
                     b.Property<byte[]>("Image")
                         .IsRequired()
@@ -114,7 +107,7 @@ namespace DAL.Migrations
                     b.ToTable("Images", (string)null);
                 });
 
-            modelBuilder.Entity("DTO.Menu", b =>
+            modelBuilder.Entity("DAL.Model.Menu", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -123,7 +116,6 @@ namespace DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastEdited")
@@ -144,58 +136,44 @@ namespace DAL.Migrations
                     b.ToTable("Menus", (string)null);
                 });
 
-            modelBuilder.Entity("DTO.Category", b =>
+            modelBuilder.Entity("CategoryItem", b =>
                 {
-                    b.HasOne("DTO.Menu", "Menu")
-                        .WithMany("Categories")
-                        .HasForeignKey("MenuID")
+                    b.HasOne("DAL.Model.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Menu");
+                    b.HasOne("DAL.Model.Item", null)
+                        .WithMany()
+                        .HasForeignKey("ItemsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("DTO.CategoryItem", b =>
+            modelBuilder.Entity("DAL.Model.Category", b =>
                 {
-                    b.HasOne("DTO.Category", "Category")
-                        .WithMany("CategoryItems")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DTO.Item", "Item")
-                        .WithMany("CategoryItems")
-                        .HasForeignKey("ItemID")
+                    b.HasOne("DAL.Model.Menu", "Menu")
+                        .WithMany("Categories")
+                        .HasForeignKey("MenuID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Category");
-
-                    b.Navigation("Item");
+                    b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("DTO.Item", b =>
+            modelBuilder.Entity("DAL.Model.Item", b =>
                 {
-                    b.HasOne("DTO.Menu", "Menu")
+                    b.HasOne("DAL.Model.Menu", "Menu")
                         .WithMany("Items")
                         .HasForeignKey("MenuID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("DTO.Category", b =>
-                {
-                    b.Navigation("CategoryItems");
-                });
-
-            modelBuilder.Entity("DTO.Item", b =>
-                {
-                    b.Navigation("CategoryItems");
-                });
-
-            modelBuilder.Entity("DTO.Menu", b =>
+            modelBuilder.Entity("DAL.Model.Menu", b =>
                 {
                     b.Navigation("Categories");
 

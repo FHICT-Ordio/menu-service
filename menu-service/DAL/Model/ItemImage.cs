@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS8618
 #pragma warning disable S101
 
-namespace DTO
+namespace DAL.Model
 {
     public class ItemImage
     {

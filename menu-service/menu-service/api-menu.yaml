@@ -9,8 +9,226 @@ servers:
   - url: http://localhost:1001
     description: Internal testing server
 paths:
+  '/Menu/{menuID}/Category':
+    post:
+      tags:
+        - Category
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: Success
+  '/Menu/{menuID}/Category/{categoryID}':
+    get:
+      tags:
+        - Category
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: categoryID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    put:
+      tags:
+        - Category
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: categoryID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryEdit'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CategoryEdit'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CategoryEdit'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Category
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: categoryID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  '/Menu/{menuID}/Item':
+    post:
+      tags:
+        - Item
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: Success
+  '/Menu/{menuID}/Item/{itemID}':
+    get:
+      tags:
+        - Item
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: itemID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    put:
+      tags:
+        - Item
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: itemID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemEdit'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ItemEdit'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ItemEdit'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Item
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: itemID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  '/Menu/{menuID}/Item/All':
+    get:
+      tags:
+        - Item
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          schema:
+            $ref: '#/components/schemas/SortType'
+        - name: filter
+          in: query
+          schema:
+            $ref: '#/components/schemas/FilterType'
+        - name: filterParam1
+          in: query
+          schema:
+            type: string
+        - name: filterParam2
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
   /Menu:
-    put:
+    post:
       tags:
         - Menu
       requestBody:
@@ -27,98 +245,54 @@ paths:
       responses:
         '200':
           description: Success
-  /Menu/Test:
+  '/Menu/{menuID}':
+    get:
+      tags:
+        - Menu
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
     put:
       tags:
         - Menu
+      parameters:
+        - name: menuID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Menu'
+              $ref: '#/components/schemas/MenuEdit'
           text/json:
             schema:
-              $ref: '#/components/schemas/Menu'
+              $ref: '#/components/schemas/MenuEdit'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Menu'
+              $ref: '#/components/schemas/MenuEdit'
       responses:
         '200':
           description: Success
-  '/Menu/{id}':
     delete:
       tags:
         - Menu
       parameters:
-        - name: id
+        - name: menuID
           in: path
           required: true
           schema:
             type: integer
             format: int32
-      responses:
-        '200':
-          description: Success
-    get:
-      tags:
-        - Menu
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: Success
-  '/Menu/Items/{id}':
-    get:
-      tags:
-        - Menu
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GetOptions'
-          text/json:
-            schema:
-              $ref: '#/components/schemas/GetOptions'
-          application/*+json:
-            schema:
-              $ref: '#/components/schemas/GetOptions'
-      responses:
-        '200':
-          description: Success
-  '/Menu/TestPut/{id}':
-    put:
-      tags:
-        - Menu
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Category'
-          text/json:
-            schema:
-              $ref: '#/components/schemas/Category'
-          application/*+json:
-            schema:
-              $ref: '#/components/schemas/Category'
       responses:
         '200':
           description: Success
@@ -130,7 +304,17 @@ components:
         name:
           type: string
           nullable: true
-        displayName:
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+    CategoryEdit:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        description:
           type: string
           nullable: true
       additionalProperties: false
@@ -141,14 +325,53 @@ components:
         - NAME_REGEX
         - PRICE_RANGE
       type: string
-    GetOptions:
+    Item:
       type: object
       properties:
-        sort:
-          $ref: '#/components/schemas/SortType'
-        filter:
-          $ref: '#/components/schemas/FilterType'
-        filterValue:
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: float
+        tags:
+          type: array
+          items:
+            type: string
+          nullable: true
+        categories:
+          type: array
+          items:
+            type: integer
+            format: int32
+          nullable: true
+      additionalProperties: false
+    ItemEdit:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: float
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+          nullable: true
+        categories:
+          type: array
+          items:
+            type: integer
+            format: int32
           nullable: true
       additionalProperties: false
     Menu:
@@ -158,6 +381,22 @@ components:
           type: string
           nullable: true
         restaurantName:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+    MenuEdit:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        restaurantName:
+          type: string
+          nullable: true
+        description:
           type: string
           nullable: true
       additionalProperties: false
