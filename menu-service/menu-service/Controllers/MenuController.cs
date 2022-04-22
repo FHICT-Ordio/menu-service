@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 using AL;
 using FL;
 using DTO;
 using MenuContext = DAL.MenuContext;
+
 
 
 namespace menu_service.Controllers
@@ -97,6 +96,7 @@ namespace menu_service.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult? AddMenu(Menu menu)
         {
             if (menu == null)
@@ -104,12 +104,13 @@ namespace menu_service.Controllers
                 return BadRequest("No item was supplied");
             }
 
-            int menuID = _menuCollection.Add(new MenuDTO { Title = menu.Title, RestaurantName = menu.RestaurantName });
+            int menuID = _menuCollection.Add(new MenuDTO { Title = menu.Title, RestaurantName = menu.RestaurantName, Description = menu.Description, Owner = HashManager.GetHash(GetRequestSub(Request)) });
             return Ok(menuID);
         }
 
 
         [HttpGet]
+        [Authorize]
         [Route("{menuID}")]
         public IActionResult? GetMenu(int menuID)
         {
@@ -146,6 +147,25 @@ namespace menu_service.Controllers
         {
             _menuCollection.Delete(menuID);
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetAll")]
+        public IActionResult? GetAllUserMenus()
+        {
+            string sub = GetRequestSub(Request);
+            return Ok(_menuCollection.GetAll(HashManager.GetHash(sub)));
+        }
+
+        private string GetRequestSub(HttpRequest request)
+        {
+            string authHeader = request.Headers.Authorization;
+
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken token = handler.ReadJwtToken(authHeader.Split(' ')[1]);
+
+            return token.Claims.FirstOrDefault(x => x.Type == "sub").Value;
         }
     }
 }

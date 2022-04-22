@@ -68,5 +68,18 @@ namespace DAL
             _context.Menus.Remove(menu);
             return _context.SaveChanges() > 0;
         }
+
+        public List<MenuDTO> GetAll(string owerID)
+        {
+            List<Menu> menus = _context.Menus.Include(x => x.Items).Include(x => x.Categories).ThenInclude(x => x.Items).Where(x => x.Owner == owerID).ToList();
+
+
+            List<MenuDTO> menuDTOs = new();
+            foreach (Menu menu in menus)
+            {
+                menuDTOs.Add(menu.ToDTO());
+            }
+            return menuDTOs;
+        }
     }
 }

@@ -119,6 +119,11 @@ namespace DAL.Migrations
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Owner")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("RestaurantName")
                         .IsRequired()
                         .HasMaxLength(100)

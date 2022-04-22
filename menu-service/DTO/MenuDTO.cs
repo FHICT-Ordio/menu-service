@@ -15,6 +15,8 @@ namespace DTO
         }
         public int ID { get; set; }
 
+        public string Owner { get; set; }
+
         public string Title { get; set; }
         public string RestaurantName { get; set; }
         public string? Description { get; set; }
