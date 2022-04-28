@@ -14,5 +14,7 @@ namespace AL
         public MenuDTO? Get(int ID);
         public bool Update(MenuDTO menuDTO);
         public bool Delete(int ID);
+
+        public List<MenuDTO> GetAll(string owerID);
     }
 }

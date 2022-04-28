@@ -21,6 +21,7 @@ namespace DAL.Model
             
 
             ID = dto.ID;
+            Owner = dto.Owner;
             Title = dto.Title;
             RestaurantName = dto.RestaurantName;
             Description = dto.Description;
@@ -43,6 +44,10 @@ namespace DAL.Model
         public int ID { get; set; }
 
         // Properties
+        [Required]
+        [StringLength(100, MinimumLength = 1)]
+        public string Owner { get; set; }
+
         [Required]
         [StringLength(100, MinimumLength = 1)]
         public string Title { get; set; }
@@ -87,6 +92,7 @@ namespace DAL.Model
             return new MenuDTO
             {
                 ID = ID,
+                Owner = Owner,
                 Title = Title,
                 RestaurantName = RestaurantName,
                 Description = Description,

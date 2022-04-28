@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(MenuContext))]
-    [Migration("20220413123812_Initial#2")]
-    partial class Initial2
+    [Migration("20220421140025_Initial#4")]
+    partial class Initial4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -120,6 +120,11 @@ namespace DAL.Migrations
 
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Owner")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("RestaurantName")
                         .IsRequired()
