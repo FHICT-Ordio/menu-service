@@ -24,17 +24,26 @@ builder.Services.AddDbContext<MenuContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MenuContext"));
 });
 
-
-
+// JSON Serializer Configuration
 builder.Services.Configure<JsonOptions>(o =>
 {
     o.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    //o.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
 builder.Services.Configure<MvcJsonOptions>(o =>
 {
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    //o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
+
+// CORS Configuration
+builder.Services.AddCors(opt =>
+{
+    opt.AddDefaultPolicy(builder =>
+    {
+        builder
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -107,15 +116,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(x => x
-    .AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-);
+app.UseCors();
 
 app.MapControllers();
 
