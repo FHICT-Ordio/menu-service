@@ -89,15 +89,15 @@ builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 var app = builder.Build();
 
 // EF migration
-//try
-//{
+try
+{
     using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
     {
         DbContext context = serviceScope.ServiceProvider.GetRequiredService<MenuContext>();
         context.Database.Migrate();
     }
-//}
-//catch { }
+}
+catch { }
 
 
 // Configure the HTTP request pipeline.
@@ -125,7 +125,7 @@ app.Run();
 
 public class HasScopeRequirement : IAuthorizationRequirement
 {
-    public string Issuer { get; }
+    public string Issuer { get; }   
     public string Scope { get; }
 
     public HasScopeRequirement(string scope, string issuer)

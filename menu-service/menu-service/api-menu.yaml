@@ -296,6 +296,13 @@ paths:
       responses:
         '200':
           description: Success
+  /Menu/GetAll:
+    get:
+      tags:
+        - Menu
+      responses:
+        '200':
+          description: Success
 components:
   schemas:
     Category:
