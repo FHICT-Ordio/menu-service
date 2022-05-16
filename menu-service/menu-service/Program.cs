@@ -51,7 +51,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt => {
     opt.AddServer(new OpenApiServer
     {
-        Url = "http://86.92.40.132:1000",
+        Url = "https://86.92.40.132:1000",
         Description = "Main production server"
     });
     opt.AddServer(new OpenApiServer
