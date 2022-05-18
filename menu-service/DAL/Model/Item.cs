@@ -10,7 +10,7 @@ namespace DAL.Model
         // Constructors
         public Item()
         {
-
+            Tags ??= "";
         }
 
         public Item(ItemDTO dto)
@@ -72,7 +72,7 @@ namespace DAL.Model
                 Name = Name,
                 Description = Description,
                 Price = Price,
-                Tags = new List<string>(Tags.Split(' ')),
+                Tags = new List<string>((Tags ?? "").Split(' ')),
                 Categories = _categories
             };
         }

@@ -72,7 +72,7 @@ namespace DAL
 
             string _tags = "";
             foreach(string tag in itemDTO.Tags)
-            {
+            {                
                 _tags += tag + " ";
             }
             item.Tags = _tags.Trim();

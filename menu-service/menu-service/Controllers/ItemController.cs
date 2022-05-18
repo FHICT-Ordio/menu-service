@@ -13,6 +13,7 @@ namespace menu_service.Controllers
     [Route("Menu/{menuID}/[controller]")]
     public class ItemController : ControllerBase
     {
+#pragma warning disable CS8618
         public class Item 
         {
             public string Name { get; set; }
@@ -31,6 +32,7 @@ namespace menu_service.Controllers
             public List<string>? Tags { get; set; } = null;
             public List<int>? Categories { get; set; } = null;
         }
+#pragma warning restore CS8618
 
         private readonly IItemCollection _itemCollection;
         private readonly ICategoryCollection _categoryCollection;
@@ -44,11 +46,15 @@ namespace menu_service.Controllers
         [HttpPost]
         public IActionResult? AddMenuItem(int menuID, Item item)
         {
+
             List<CategoryDTO> _categories = new();
-            foreach(int categoryID in item.Categories)
-            {
-                if (_categoryCollection.Get(menuID, categoryID) != null)
-                    _categories.Add(new CategoryDTO() { ID = categoryID });
+            if (item.Categories != null)
+            {                
+                foreach (int categoryID in item.Categories)
+                {
+                    if (_categoryCollection.Get(menuID, categoryID) != null)
+                        _categories.Add(new CategoryDTO() { ID = categoryID });
+                }
             }
 
 
@@ -151,12 +157,13 @@ namespace menu_service.Controllers
                     }
                     break;
 
-                case GetOptions.FilterType.NAME:
+                case GetOptions.FilterType.NAME:                    
                     items = items.FindAll(x => x.Name.ToLower().Contains((filterParam1 ?? "").ToLower()));
                     break;
 
                 case GetOptions.FilterType.NAME_REGEX:
-                    items = items.FindAll(x => Regex.IsMatch(x.Name, filterParam1 ?? ""));
+                    string safeRegex = Regex.Escape(filterParam1 ?? "");
+                    items = items.FindAll(x => new Regex(safeRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(2000)).IsMatch(x.Name));
                     break;
             }
 

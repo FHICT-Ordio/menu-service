@@ -11,6 +11,7 @@ namespace menu_service.Controllers
     [Route("Menu/{menuID}/[controller]")]
     public class CategoryController : ControllerBase
     {
+#pragma warning disable CS8618
         public class Category
         {
             public string Name { get; set; }
@@ -22,6 +23,7 @@ namespace menu_service.Controllers
             public string? Name { get; set; } = null;
             public string? Description { get; set; } = null;
         }
+#pragma warning restore CS8618
 
         private readonly ICategoryCollection _categoryCollection;
         
