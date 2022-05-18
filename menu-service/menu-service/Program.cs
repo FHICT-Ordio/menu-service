@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen(opt => {
     });
     opt.AddServer(new OpenApiServer
     {
-        Url = "http://localhost:1001",
+        Url = "https://localhost:1001",
         Description = "Internal testing server"
     });
 
@@ -88,10 +88,10 @@ builder.Services
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("read:current_user", policy => policy.Requirements.Add(new HasScopeRequirement("read:current_user", domain)));
+    options.AddPolicy("read:current_user", policy => policy.Requirements.Add(new menu_service.AuthConfig.HasScopeRequirement("read:current_user", domain)));
 });
 
-builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, menu_service.AuthConfig.HasScopeHandler>();
 
 
 // Application Building
@@ -106,7 +106,10 @@ try
         context.Database.Migrate();
     }
 }
-catch { }
+catch 
+{
+    Console.WriteLine("An error occured during EF Migration, migration aborted");
+}
 
 
 // Configure the HTTP request pipeline.
@@ -124,35 +127,3 @@ app.UseCors();
 app.MapControllers();
 
 app.Run();
-
-
-public class HasScopeRequirement : IAuthorizationRequirement
-{
-    public string Issuer { get; }   
-    public string Scope { get; }
-
-    public HasScopeRequirement(string scope, string issuer)
-    {
-        Scope = scope ?? throw new ArgumentNullException(nameof(scope));
-        Issuer = issuer ?? throw new ArgumentNullException(nameof(issuer));
-    }
-}
-
-public class HasScopeHandler : AuthorizationHandler<HasScopeRequirement>
-{
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, HasScopeRequirement requirement)
-    {
-        // If user does not have the scope claim, get out of here
-        if (!context.User.HasClaim(c => c.Type == "scope" && c.Issuer == requirement.Issuer))
-            return Task.CompletedTask;
-
-        // Split the scopes string into an array
-        var scopes = context.User.FindFirst(c => c.Type == "scope" && c.Issuer == requirement.Issuer).Value.Split(' ');
-
-        // Succeed if the scope array contains the required scope
-        if (scopes.Any(s => s == requirement.Scope))
-            context.Succeed(requirement);
-
-        return Task.CompletedTask;
-    }
-}

@@ -4,9 +4,9 @@ info:
   description: An API used for handling restaurant menus
   version: v1
 servers:
-  - url: http://86.92.40.132:1000
+  - url: https://86.92.40.132:1000
     description: Main production server
-  - url: http://localhost:1001
+  - url: https://localhost:1001
     description: Internal testing server
 paths:
   '/Menu/{menuID}/Category':
@@ -231,7 +231,10 @@ paths:
     post:
       tags:
         - Menu
+      summary: 'Add Menu [O]'
+      description: Add a new Menu. An authorization token should be provided through the authorization header to authorize and identify the menu-owner.
       requestBody:
+        description: A menu object to be added. The description field is optional
         content:
           application/json:
             schema:
@@ -244,32 +247,86 @@ paths:
               $ref: '#/components/schemas/Menu'
       responses:
         '200':
-          description: Success
+          description: The menu was added. The new menu's ID will be returned
+          content:
+            text/plain:
+              schema:
+                type: integer
+                format: int32
+            application/json:
+              schema:
+                type: integer
+                format: int32
+            text/json:
+              schema:
+                type: integer
+                format: int32
+        '400':
+          description: The menu could not be added. More information will be given in the rensponse body
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   '/Menu/{menuID}':
     get:
       tags:
         - Menu
+      summary: Get Menu
+      description: Get an existing Menu.
       parameters:
         - name: menuID
           in: path
+          description: The ID for the requested menu
           required: true
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: Success
+          description: The menu eixsts. The new menu object will be returned
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Menu'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '400':
+          description: The menu could not be found. More information will be given in the rensponse body
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - Menu
+      summary: 'Update Menu [O]'
+      description: Edit an existing Menu. An authorization token should be provided through the authorization header to authorize and identify the menu-owner.
       parameters:
         - name: menuID
           in: path
+          description: The ID for the menu to be edited
           required: true
           schema:
             type: integer
             format: int32
       requestBody:
+        description: 'The updated values to be edited. All field are optional, exluded fields will be retained'
         content:
           application/json:
             schema:
@@ -282,27 +339,80 @@ paths:
               $ref: '#/components/schemas/MenuEdit'
       responses:
         '200':
-          description: Success
+          description: The menu was edited
+        '400':
+          description: The menu could not be updated. More information will be given in the response body
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: An authorization error occured. More information will be given in the response body
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
     delete:
       tags:
         - Menu
+      summary: 'Delte Menu [O]'
+      description: Delete an existing Menu. An authorization token should be provided through the authorization header to authorize and identify the menu-owner.
       parameters:
         - name: menuID
           in: path
+          description: The ID for the menu to be deleted
           required: true
           schema:
             type: integer
             format: int32
       responses:
         '200':
-          description: Success
+          description: The menu was deleted
+        '400':
+          description: The menu could not be deleted. More information will be given in the response body
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: An authorization error occured. More information will be given in the response body
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /Menu/GetAll:
     get:
       tags:
         - Menu
+      summary: 'Get User Menus [O]'
+      description: Get all menus owner by a specific user. An authorization token should be provided through the authorization header to authorize and identify the user.
       responses:
         '200':
-          description: Success
+          description: All user menus will be returned
 components:
   schemas:
     Category:
@@ -407,6 +517,26 @@ components:
           type: string
           nullable: true
       additionalProperties: false
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: { }
     SortType:
       enum:
         - ALP_ASC
