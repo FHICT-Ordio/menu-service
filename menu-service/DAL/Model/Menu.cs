@@ -26,6 +26,7 @@ namespace DAL.Model
             RestaurantName = dto.RestaurantName;
             Description = dto.Description;
             LastEdited = dto.LastEdited;
+            Archived = dto.Archived;
 
             Items = new List<Item>();
             foreach (ItemDTO item in dto.Items)
@@ -61,6 +62,7 @@ namespace DAL.Model
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime LastEdited { get; set; }
+        public bool Archived { get; set; }
 
         // External Properties
         public ICollection<Item> Items { get; set; }

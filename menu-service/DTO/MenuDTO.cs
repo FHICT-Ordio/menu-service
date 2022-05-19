@@ -21,6 +21,7 @@ namespace DTO
         public string RestaurantName { get; set; }
         public string? Description { get; set; }
         public DateTime LastEdited { get; set; }
+        public bool Archived { get; set; }
 
 
         public List<ItemDTO> Items { get; set; }

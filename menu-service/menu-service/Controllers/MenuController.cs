@@ -57,7 +57,7 @@ namespace menu_service.Controllers
                 return BadRequest("No item was supplied");
             }
 
-            int menuID = _menuCollection.Add(new MenuDTO { Title = menu.Title, RestaurantName = menu.RestaurantName, Description = menu.Description, Owner = HashManager.GetHash(GetRequestSub(Request)) });
+            int menuID = _menuCollection.Add(new MenuDTO { Title = menu.Title, RestaurantName = menu.RestaurantName, Description = menu.Description, Owner = HashManager.GetHash(GetRequestSub(Request)), Archived = false });
             return Ok(menuID);
         }
 
@@ -140,7 +140,7 @@ namespace menu_service.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Route("{menuID}")]
-        public IActionResult? DeleteMenu(int menuID)
+        public IActionResult? ArchiveMenu(int menuID)
         {
             MenuDTO? menuDTO = _menuCollection.Get(menuID);
 
@@ -149,9 +149,9 @@ namespace menu_service.Controllers
 
             string user = GetRequestSub(Request);
             if (!HashManager.CompareStringToHash(user, menuDTO.Owner))
-                return Unauthorized("A menu can only be edited by the menu owner");
+                return Unauthorized("A menu can only be archived by the menu owner");
 
-            bool state = _menuCollection.Delete(menuID);
+            bool state = _menuCollection.Archive(menuID);
             if (state)
                 return Ok();
             else
@@ -169,10 +169,10 @@ namespace menu_service.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]        
         [Route("GetAll")]
-        public IActionResult? GetAllUserMenus()
+        public IActionResult? GetAllUserMenus(bool archived = false)
         {
             string sub = GetRequestSub(Request);
-            return Ok(_menuCollection.GetAll(HashManager.GetHash(sub)));
+            return Ok(_menuCollection.GetAll(HashManager.GetHash(sub), archived));
         }
 
         private string GetRequestSub(HttpRequest request)

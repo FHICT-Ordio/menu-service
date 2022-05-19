@@ -59,19 +59,19 @@ namespace DAL
             return _context.SaveChanges() > 0;
         }
 
-        public bool Delete(int ID)
+        public bool Archive(int ID, bool restore = false)
         {
             Menu? menu = _context.Menus.Include(x => x.Items).Include(x => x.Categories).FirstOrDefault(x => x.ID == ID);
             if (menu == null)
                 return false;
 
-            _context.Menus.Remove(menu);
+            menu.Archived = !restore;
             return _context.SaveChanges() > 0;
         }
 
-        public List<MenuDTO> GetAll(string owerID)
+        public List<MenuDTO> GetAll(string owerID, bool getArchived)
         {
-            List<Menu> menus = _context.Menus.Include(x => x.Items).Include(x => x.Categories).ThenInclude(x => x.Items).Where(x => x.Owner == owerID).ToList();
+            List<Menu> menus = _context.Menus.Include(x => x.Items).Include(x => x.Categories).ThenInclude(x => x.Items).Where(x => x.Owner == owerID).ToList().FindAll(x => !x.Archived && x.Archived == getArchived);
 
 
             List<MenuDTO> menuDTOs = new();

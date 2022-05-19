@@ -13,8 +13,8 @@ namespace AL
         public int Add(MenuDTO menuDTO);
         public MenuDTO? Get(int ID);
         public bool Update(MenuDTO menuDTO);
-        public bool Delete(int ID);
+        public bool Archive(int ID, bool restore = false);
 
-        public List<MenuDTO> GetAll(string owerID);
+        public List<MenuDTO> GetAll(string owerID, bool getArchived);
     }
 }

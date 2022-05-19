@@ -410,6 +410,12 @@ paths:
         - Menu
       summary: 'Get User Menus [O]'
       description: Get all menus owner by a specific user. An authorization token should be provided through the authorization header to authorize and identify the user.
+      parameters:
+        - name: archived
+          in: query
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: All user menus will be returned
