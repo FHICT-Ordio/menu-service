@@ -109,7 +109,7 @@ namespace menu_service.Controllers
         [Route("{itemID}")]
         public IActionResult? DeleteItem(int menuID, int itemID)
         {
-            _itemCollection.Delete(menuID, itemID);
+            _itemCollection.Archive(menuID, itemID);
             return Ok();
         }
 

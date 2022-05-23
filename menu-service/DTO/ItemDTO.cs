@@ -17,6 +17,7 @@ namespace DTO
         public string? Description { get; set; }
         public float Price { get; set; }        
         public List<string> Tags { get; set; }
+        public bool Archived { get; set; }
 
         public List<CategoryDTO> Categories { get; set; }
     }

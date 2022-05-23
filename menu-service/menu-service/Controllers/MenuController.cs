@@ -110,7 +110,7 @@ namespace menu_service.Controllers
                 return BadRequest("Menu with given ID does not exist");
 
             string user = GetRequestSub(Request);
-            if (menuDTO.Owner != user)
+            if (!HashManager.CompareStringToHash(user, menuDTO.Owner))
                 return Unauthorized("A menu can only be edited by the menu owner");
 
             menuDTO.Title = menu.Title ?? menuDTO.Title;
