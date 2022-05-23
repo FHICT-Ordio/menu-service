@@ -91,13 +91,13 @@ namespace DAL
             return _context.SaveChanges() > 0;
         }
 
-        public bool Delete(int menuID, int itemID)
+        public bool Archive(int menuID, int itemID, bool restore = false)
         {
             Item? item = _context.Items.FirstOrDefault(x => x.MenuID == menuID && x.ID == itemID);
             if (item == null)
                 return false;
 
-            _context.Items.Remove(item);
+            item.Archived = !restore;
             return _context.SaveChanges() > 0;
         }
 

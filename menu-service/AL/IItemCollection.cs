@@ -13,7 +13,7 @@ namespace AL
         public int Add(int menuID, ItemDTO itemDTO);
         public ItemDTO? Get(int menuID, int itemID);
         public bool Update(int menuID, ItemDTO itemDTO);
-        public bool Delete(int menuID, int itemID);
+        public bool Archive(int menuID, int itemID, bool restore = false);
 
         public List<ItemDTO> GetAll(int menuID);
     }

@@ -31,16 +31,16 @@ namespace DAL
         public MenuDTO? Get(int ID)
         {
             Menu? menu = _context.Menus
-                .Include(x => x.Items)
+                .Include(x => x.Items.Where(i => !i.Archived))
                 .ThenInclude(x => x.Categories)
                 .Include(x => x.Categories)
-                .ThenInclude(x => x.Items)
+                .ThenInclude(x => x.Items.Where(i => !i.Archived))
                 .FirstOrDefault(x => x.ID == ID);
 
             if (menu == null)
                 return null;
 
-            return menu.ToDTO(true, false, true);
+            return menu.ToDTO(true, true, true);
         }
 
         public bool Update(MenuDTO menuDTO)
@@ -59,25 +59,36 @@ namespace DAL
             return _context.SaveChanges() > 0;
         }
 
-        public bool Delete(int ID)
+        public bool Archive(int ID, bool restore = false)
         {
             Menu? menu = _context.Menus.Include(x => x.Items).Include(x => x.Categories).FirstOrDefault(x => x.ID == ID);
             if (menu == null)
                 return false;
 
-            _context.Menus.Remove(menu);
+            menu.Archived = !restore;
+
+            foreach(Item item in menu.Items)
+            {
+                item.Archived = !restore;
+            }
+
             return _context.SaveChanges() > 0;
         }
 
-        public List<MenuDTO> GetAll(string owerID)
+        public List<MenuDTO> GetAll(string ownerID, bool getArchived)
         {
-            List<Menu> menus = _context.Menus.Include(x => x.Items).Include(x => x.Categories).ThenInclude(x => x.Items).Where(x => x.Owner == owerID).ToList();
+            List<Menu> menus = _context.Menus
+                .Include(x => x.Items.Where(i => i.Archived == getArchived))
+                .Include(x => x.Categories)
+                .ThenInclude(x => x.Items.Where(i => i.Archived == getArchived))
+                .Where(x => x.Owner == ownerID && x.Archived == getArchived)
+                .ToList();
 
 
             List<MenuDTO> menuDTOs = new();
             foreach (Menu menu in menus)
             {
-                menuDTOs.Add(menu.ToDTO());
+                menuDTOs.Add(menu.ToDTO(true));
             }
             return menuDTOs;
         }

@@ -26,6 +26,7 @@ namespace DAL.Model
             RestaurantName = dto.RestaurantName;
             Description = dto.Description;
             LastEdited = dto.LastEdited;
+            Archived = dto.Archived;
 
             Items = new List<Item>();
             foreach (ItemDTO item in dto.Items)
@@ -61,6 +62,7 @@ namespace DAL.Model
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime LastEdited { get; set; }
+        public bool Archived { get; set; }
 
         // External Properties
         public ICollection<Item> Items { get; set; }
@@ -71,7 +73,7 @@ namespace DAL.Model
         // Navigational Properties
 
         // Methods
-        public MenuDTO ToDTO(bool keepReferences = false, bool keepItemReferences = false, bool keepCategoryReferences = false)
+        public MenuDTO ToDTO(bool keepReferences = false, bool keepItemToCategoryReferences = false, bool keepCategoryToItemReferences = false)
         {
             List<ItemDTO> _items = new();            
             List<CategoryDTO> _categories = new();            
@@ -80,12 +82,12 @@ namespace DAL.Model
             {
                 foreach (Item item in Items)
                 {
-                    _items.Add(item.ToDTO(keepItemReferences));
+                    _items.Add(item.ToDTO(keepItemToCategoryReferences));
                 }
 
                 foreach (Category category in Categories)
                 {
-                    _categories.Add(category.ToDTO(keepCategoryReferences));
+                    _categories.Add(category.ToDTO(keepCategoryToItemReferences));
                 }
             }
 

@@ -19,6 +19,7 @@ namespace DAL.Model
             Name = dto.Name;
             Description = dto.Description;
             Price = dto.Price;
+            Archived = dto.Archived;
 
             Tags = "";
             foreach(string tag in dto.Tags)
@@ -42,6 +43,7 @@ namespace DAL.Model
         public string? Description { get; set; }
         public float Price { get; set; }
         public string? Tags { get; set; }
+        public bool Archived { get; set; }
 
 
         // External Properties
@@ -73,7 +75,8 @@ namespace DAL.Model
                 Description = Description,
                 Price = Price,
                 Tags = new List<string>((Tags ?? "").Split(' ')),
-                Categories = _categories
+                Categories = _categories,
+                Archived = Archived
             };
         }
     }
