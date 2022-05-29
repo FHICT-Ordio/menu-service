@@ -29,26 +29,21 @@
             /// </summary>
             NONE,
             /// <summary>
-            /// Apply Name filtering. A String object should be provided in FilterValue as filter condition
+            /// Apply Name filtering. A String object should be provided as parameter for filter condition
             /// </summary>
-            /// <example>
-            /// "Carpacio"
-            /// </example>
             NAME,
             /// <summary>
-            /// Apply Regular Expression filtering. A Regex expression should be provided in FilterValue
+            /// Apply Regular Expression filtering. A Regex expression should be provided as parameter
             /// </summary>
-            /// <example>
-            /// "([A-Z])\w+"
-            /// </example>
             NAME_REGEX,
             /// <summary>
-            /// Apply price range filtering. An integer range value should be supplied in FilterValue
+            /// Apply price range filtering. An integer range value should be supplied as parameters
             /// </summary>
-            /// <example>
-            /// { x, x }
-            /// </example>
-            PRICE_RANGE
+            PRICE_RANGE,
+            /// <summary>
+            /// Apply tag filtering. A tag to filter on should be provied as parameter
+            /// </summary>
+            TAG
         };
 
         /// <summary>

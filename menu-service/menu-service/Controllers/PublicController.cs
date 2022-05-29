@@ -183,6 +183,10 @@ namespace menu_service.Controllers
                         string safeRegex = Regex.Escape(filterParam1 ?? "");
                         items = items.FindAll(x => new Regex(safeRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(2000)).IsMatch(x.Name));
                         break;
+
+                    case GetOptions.FilterType.TAG:
+                        items = items.FindAll(x => x.Tags.Contains(filterParam1 ?? ""));
+                        break;
                 }
 
                 List<PublicItem> _publicItems = new();

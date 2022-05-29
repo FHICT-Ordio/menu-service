@@ -942,6 +942,7 @@ components:
         - NAME
         - NAME_REGEX
         - PRICE_RANGE
+        - TAGS
       type: string
     Item:
       type: object
