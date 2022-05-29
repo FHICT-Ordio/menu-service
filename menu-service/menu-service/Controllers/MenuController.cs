@@ -28,10 +28,12 @@ namespace menu_service.Controllers
         /// <param name="menu">A menu object to be added. The description field is optional</param>
         /// <response code="200">The menu was added. The new menu's ID will be returned</response>
         /// <response code="400">The menu could not be added. More information will be given in the rensponse body</response>
+        /// <response code="401">An authorization error occured. More information will be given in the response body</response>
         [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult? AddMenu(Menu menu)
         {
             if (menu == null)
@@ -53,10 +55,12 @@ namespace menu_service.Controllers
         /// <param name="menuID">The ID for the requested menu</param>
         /// <response code="200">The menu eixsts. The new menu object will be returned</response>
         /// <response code="400">The menu could not be found. More information will be given in the rensponse body</response>
+        /// <response code="401">An authorization error occured. More information will be given in the response body</response>
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MenuDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Route("{menuID}")]
         public IActionResult? GetMenu(int menuID)
         {
@@ -152,9 +156,11 @@ namespace menu_service.Controllers
         /// Get all menus owner by a specific user. An authorization token should be provided through the authorization header to authorize and identify the user.
         /// </remarks>
         /// <response code="200">All user menus will be returned</response>
+        /// <response code="401">An authorization error occured. More information will be given in the response body</response>
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK, Type=(typeof(List<MenuDTO>)))]        
+        [ProducesResponseType(StatusCodes.Status200OK, Type= typeof(List<MenuDTO>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Route("GetAll")]
         public IActionResult? GetAllUserMenus(bool archived = false)
         {

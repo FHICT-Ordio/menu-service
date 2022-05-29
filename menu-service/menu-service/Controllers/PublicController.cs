@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
+using System.Text.RegularExpressions;
 
 using AL;
 using FL;
@@ -16,11 +16,13 @@ namespace menu_service.Controllers
     {
 
         private readonly IMenuCollection _menuCollection;
+        private readonly IItemCollection _itemCollection;
         private readonly JWTManager _jwtManager;
 
-        public PublicController(MenuContext context, IMenuCollection? menuCollection = null)
+        public PublicController(MenuContext context, IMenuCollection? menuCollection = null, IItemCollection? itemCollection = null)
         {
             _menuCollection = menuCollection ?? IMenuCollectionFactory.Get(context);
+            _itemCollection = itemCollection ?? IItemCollectionFactory.Get(context);
             _jwtManager = new("IsMUbet9tSM0O2Hf7DO92eg2l8vto74S9Tk19u558w6bJ2M3j75XM5s3oKqmCWAv");
         }
 
@@ -69,7 +71,7 @@ namespace menu_service.Controllers
         /// <param name="token">The Menu token associated with the menu you want to retreive</param>
         /// <response code="200">The menu eixsts. The new menu object will be returned</response>
         /// <response code="400">The menu could not be found. More information will be given in the rensponse body</response>
-        /// <response code="401">An error occured reading the token or the provided token or its signature was invalid</response>
+        /// <response code="401">An error occured reading the token or the provided token or its signature was invalid. More information will be given in the rensponse body</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PublicMenu))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -97,6 +99,110 @@ namespace menu_service.Controllers
             {
                 return Unauthorized("The token's signature is invalid! Generate a new token using the admin tool");
             } catch (FormatException)
+            {
+                return Unauthorized("Something went wrong parsing the Menu token, please try again or generate a new token using the admin tool");
+            }
+        }
+
+        /// <summary>
+        /// Get All Menu Items
+        /// </summary>
+        /// <remarks>
+        /// Get all of a specific Menus items using the Menus public identification token. This token can be aquired through the Ordio Admin Tool. Different kinds of filtering and sorting can be applied.
+        /// </remarks>
+        /// <param name="token">The Menu token associated with the menu you want to retreive</param>
+        /// <param name="sort">The sort type to apply to the returned items. The default sort is alphabetically ascending</param>
+        /// <param name="filter">The type of filter to apply.</param>
+        /// <param name="filterParam1">The first argument to apply to the filtering. For name filtering supply a string that the items name has to contain. For Regex filtering supply a Regex string. For price range filtering supply a lower bound.</param>
+        /// <param name="filterParam2">The second argument to apply to the filtering. For name and Regex filtering this field is not required. For price filtering, supply an upper bound</param>
+        /// <response code="200">A list of items with the specified filtering and sorting will be returned</response>
+        /// <response code="400">The menu could not be found. More information will be given in the rensponse body</response>
+        /// <response code="401">An error occured reading the token or the provided token or its signature was invalid. More information will be given in the rensponse body</response>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublicItem>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Route("GetMenuItems")]
+        public IActionResult? GetMenuItems(string token, GetOptions.SortType sort = GetOptions.SortType.ALP_ASC, GetOptions.FilterType filter = GetOptions.FilterType.NONE, string? filterParam1 = null, string? filterParam2 = null)
+        {
+            try
+            {
+                Dictionary<string, object> json = _jwtManager.Decode(token, true);
+
+                if (!json.ContainsKey("MenuID"))
+                    throw new FormatException();
+
+
+                List<ItemDTO> items = _itemCollection.GetAll(Convert.ToInt32(json["MenuID"]));
+
+
+                if (items == null)
+                    return BadRequest("The menu could not be found");
+
+                switch (sort)
+                {
+                    case GetOptions.SortType.ALP_ASC:
+                        items = items.OrderBy(x => x.Name).ToList();
+                        break;
+
+                    case GetOptions.SortType.ALP_DES:
+                        items = items.OrderBy(x => x.Name).ToList();
+                        items.Reverse();
+                        break;
+
+                    case GetOptions.SortType.PRICE_ASC:
+                        items = items.OrderBy(x => x.Price).ToList();
+                        break;
+
+                    case GetOptions.SortType.PRICE_DES:
+                        items = items.OrderBy(x => x.Price).ToList();
+                        items.Reverse();
+                        break;
+                }
+
+                switch (filter)
+                {
+                    case GetOptions.FilterType.PRICE_RANGE:
+                        try
+                        {
+                            items = items.FindAll(x => x.Price >= Convert.ToInt32(filterParam1));
+                            if (filterParam2 != null)
+                                items = items.FindAll(x => x.Price <= Convert.ToInt32(filterParam2));
+                        }
+                        catch (FormatException ex)
+                        {
+                            return BadRequest(ex.Message);
+                        }
+                        break;
+
+                    case GetOptions.FilterType.NAME:
+                        items = items.FindAll(x => x.Name.ToLower().Contains((filterParam1 ?? "").ToLower()));
+                        break;
+
+                    case GetOptions.FilterType.NAME_REGEX:
+                        string safeRegex = Regex.Escape(filterParam1 ?? "");
+                        items = items.FindAll(x => new Regex(safeRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(2000)).IsMatch(x.Name));
+                        break;
+                }
+
+                List<PublicItem> _publicItems = new();
+                foreach(ItemDTO item in items)
+                {
+                    _publicItems.Add(new PublicItem(item));
+                }
+
+                return Ok(_publicItems);
+
+            }
+            catch (TokenExpiredException)
+            {
+                return Unauthorized("The provided token has expired! Generate a new token using the admin tool");
+            }
+            catch (SignatureVerificationException)
+            {
+                return Unauthorized("The token's signature is invalid! Generate a new token using the admin tool");
+            }
+            catch (FormatException)
             {
                 return Unauthorized("Something went wrong parsing the Menu token, please try again or generate a new token using the admin tool");
             }

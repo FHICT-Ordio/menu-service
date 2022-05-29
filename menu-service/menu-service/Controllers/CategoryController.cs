@@ -35,9 +35,12 @@ namespace menu_service.Controllers
         /// <response code="401">The authorization token was invalid or not provided</response>
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult? AddCategory(int menuID, Category category)
         {
-            MenuDTO menuDTO = _menuCollection.Get(menuID);
+            MenuDTO? menuDTO = _menuCollection.Get(menuID);
             if (menuDTO == null)
                 return BadRequest("A menu with the given ID could not be found");
 
@@ -55,15 +58,18 @@ namespace menu_service.Controllers
         /// </remarks>
         /// <param name="menuID">The ID of the Menu the Category belongs to</param>
         /// <param name="categoryID">The ID of the Category to be retreived</param>
-        /// <response code="200">The category was added. The new Categorie's ID will be returned</response>
+        /// <response code="200">The category was found and will be returned as JSON object</response>
         /// <response code="400">The menu could not be found. More information will be given in the rensponse body</response>
         /// <response code="401">The authorization token was invalid or not provided</response>
         [HttpGet]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CategoryDTO>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Route("{categoryID}")]
         public IActionResult? GetCategory(int menuID, int categoryID)
         {
-            MenuDTO menuDTO = _menuCollection.Get(menuID);
+            MenuDTO? menuDTO = _menuCollection.Get(menuID);
             if (menuDTO == null)
                 return BadRequest("A menu with the given ID could not be found");
 
@@ -92,13 +98,15 @@ namespace menu_service.Controllers
         /// <response code="200">The category was updated</response>
         /// <response code="400">The menu or category could not be found. More information will be given in the rensponse body</response>
         /// <response code="401">The authorization token was invalid or not provided</response>
-        /// <returns></returns>
         [HttpPut]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Route("{categoryID}")]
         public IActionResult? UpdateCategory(int menuID, int categoryID, CategoryEdit updateCategory)
         {
-            MenuDTO menuDTO = _menuCollection.Get(menuID);
+            MenuDTO? menuDTO = _menuCollection.Get(menuID);
             if (menuDTO == null)
                 return BadRequest("A menu with the given ID could not be found");
 
@@ -132,10 +140,13 @@ namespace menu_service.Controllers
         /// <response code="401">The authorization token was invalid or not provided</response>
         [HttpDelete]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Route("{categoryID}")]
         public IActionResult? DeleteCategory(int menuID, int categoryID)
         {
-            MenuDTO menuDTO = _menuCollection.Get(menuID);
+            MenuDTO? menuDTO = _menuCollection.Get(menuID);
             if (menuDTO == null)
                 return BadRequest("A menu with the given ID could not be found");
 

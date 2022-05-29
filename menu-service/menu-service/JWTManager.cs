@@ -21,8 +21,7 @@ namespace menu_service
         /// <summary>
         /// Create a Json Web Token with the given payload
         /// </summary>
-        /// <param name="payload">string-object dictionary of the values a token should be generated for</param>
-        /// <param name="parameters">No extra parameters are used</param>
+        /// <param name="json">string-object dictionary of the values a token should be generated for</param>
         /// <returns>Json Web Token</returns>
         /// <exception cref="ArgumentException">An argument was infalid</exception>
         public string Create(Dictionary<string, object> json)
