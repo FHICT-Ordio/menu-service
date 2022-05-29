@@ -15,6 +15,6 @@ namespace AL
         public bool Update(MenuDTO menuDTO);
         public bool Archive(int ID, bool restore = false);
 
-        public List<MenuDTO> GetAll(string owerID, bool getArchived);
+        public List<MenuDTO> GetAll(string ownerID, bool getArchived);
     }
 }
