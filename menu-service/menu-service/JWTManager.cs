@@ -12,6 +12,8 @@ namespace menu_service
         private readonly string secret;
         private readonly double? validityTime;
 
+        /// <param name="secret">The secret JWT tokens are signed with</param>
+        /// <param name="validityTime">The validity time of tokens in </param>
         public JWTManager(string secret, double? validityTime = null)
         {
             this.secret = secret ?? throw new ArgumentNullException(nameof(secret));
@@ -26,6 +28,9 @@ namespace menu_service
         /// <exception cref="ArgumentException">An argument was infalid</exception>
         public string Create(Dictionary<string, object> json)
         {
+            if (json == null)
+                throw new ArgumentNullException(nameof (json));
+
             IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
             IJsonSerializer serializer = new JsonNetSerializer();
             IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
